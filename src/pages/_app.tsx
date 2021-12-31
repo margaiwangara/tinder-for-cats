@@ -2,15 +2,16 @@ import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { AppProps } from 'next/app';
 import theme from '@src/theme';
 import { normalize } from 'polished';
+import FavoritesProvider from '@context/FavoritesContext';
 
 function App({ Component, pageProps }: AppProps) {
   return (
-    <>
+    <FavoritesProvider>
       <GlobalStyle />
       <ThemeProvider theme={theme}>
         <Component {...pageProps} />
       </ThemeProvider>
-    </>
+    </FavoritesProvider>
   );
 }
 
