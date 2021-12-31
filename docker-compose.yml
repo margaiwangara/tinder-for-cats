@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  tinder-for-cats:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - ./:/app
+      - /usr/src/app/node_modules
+      - /usr/src/app/.next
+    ports:
+      - '3000:3000'
