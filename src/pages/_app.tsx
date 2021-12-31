@@ -28,6 +28,10 @@ const GlobalStyle = createGlobalStyle`
     width: 100%;
     overflow-x: hidden;
   }
+
+  a {
+    text-decoration: none;
+  }
 `;
 
 export default App;
