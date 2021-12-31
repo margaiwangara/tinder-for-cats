@@ -36,6 +36,10 @@ const Tab = styled.button<{ active?: boolean }>`
   color: ${({ active, theme }) =>
     active ? theme.colors.white : theme.colors.primary};
   font-size: 0.9rem;
+
+  &:hover {
+    opacity: 0.8;
+  }
 `;
 
 export default Favorites;
