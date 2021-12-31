@@ -21,7 +21,8 @@
       "@utils/*": ["src/utils/*"],
       "@base/*": ["./*"],
       "@src/*": ["src/*"],
-      "@public/*": ["public/*"]
+      "@public/*": ["public/*"],
+      "@containers/*": ["src/containers/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
