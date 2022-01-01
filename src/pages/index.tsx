@@ -6,7 +6,9 @@ import { IoHeartOutline, IoHeart, IoCheckmark, IoClose } from 'react-icons/io5';
 import { useQuery } from 'react-query';
 import { useRequests } from '@hooks/useRequests';
 import Loader from '@components/Loader';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, createRef, useMemo } from 'react';
+import { useVotesContext } from '@context/VotesContext';
+import { __DATA_COUNT__ } from '@src/constants';
 
 type CatProps = {
   id: string;
@@ -16,9 +18,8 @@ type CatProps = {
 };
 
 function HomePage() {
-  const [activeCat, setActiveCat] = useState<CatProps | null>(null);
-  const [count, setCount] = useState(0);
-  const [changeLoading, setChangeLoading] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const { setVotes, votes } = useVotesContext();
 
   const { fetchCats } = useRequests();
 
@@ -27,17 +28,27 @@ function HomePage() {
   const cats = (data as CatProps[]) || [];
 
   useEffect(() => {
-    if (!isLoading && !error) {
-      setActiveCat(cats[count]);
-      setChangeLoading(false);
+    if (currentIndex === cats.length - 1) {
+      setCurrentIndex(0);
     }
-  }, [isLoading, error, JSON.stringify(data), count]);
+  }, [currentIndex, JSON.stringify(cats)]);
 
-  const handleClick = () => {
-    setChangeLoading(true);
-    const condition = count === cats.length - 1;
-    setCount(condition ? 0 : count + 1);
+  const handleVote = (status: 'likes' | 'dislikes') => {
+    const cat = cats?.[currentIndex];
+    if (!cat) {
+      return;
+    }
+
+    const newVotes = {
+      ...votes,
+      [status]: [...votes[status], cat.id],
+    };
+
+    setVotes(newVotes);
+    setCurrentIndex(currentIndex + 1);
   };
+
+  console.log('votes', votes);
 
   return (
     <DefaultLayout title="Home">
@@ -45,20 +56,23 @@ function HomePage() {
 
       <Card>
         <section className="card-image">
-          {isLoading || !activeCat?.url ? (
-            <p>Loading...</p>
-          ) : (
-            <Image layout="fill" src={activeCat?.url} alt="cat" priority />
-          )}
-          <button className="fav-button">
-            <IoHeartOutline />
-          </button>
+          <Image
+            layout="responsive"
+            height={350}
+            width={300}
+            alt="cat"
+            src={
+              !isLoading && data
+                ? data?.[currentIndex]?.url
+                : '/images/placeholder.jpg'
+            }
+          />
         </section>
         <section className="footer">
-          <NoButton onClick={handleClick} disabled={changeLoading}>
+          <NoButton onClick={() => handleVote('dislikes')}>
             <IoClose />
           </NoButton>
-          <YesButton onClick={handleClick} disabled={changeLoading}>
+          <YesButton onClick={() => handleVote('likes')}>
             <IoCheckmark />
           </YesButton>
         </section>
@@ -70,7 +84,7 @@ function HomePage() {
 const Card = styled.section`
   width: 300px;
   margin: 1rem auto;
-  height: 350px;
+  min-height: 350px;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -78,26 +92,7 @@ const Card = styled.section`
 
   .card-image {
     width: 100%;
-    flex: 1;
-    border-radius: 10px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-  }
-
-  .image-box {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-
-    img {
-      height: 100%;
-      width: 100%;
-      object-fit: cover;
-      object-position: center;
-    }
+    height: 350px;
   }
 
   button.fav-button {
