@@ -10,7 +10,6 @@ import { useState, useEffect } from 'react';
 import { useVotesContext } from '@context/VotesContext';
 import { __DATA_COUNT__ } from '@src/constants';
 import { useLocalStorage } from '@hooks/useLocalStorage';
-import placeholder from '@public/images/placeholder.jpg';
 
 type CatProps = {
   id: string;
@@ -21,20 +20,20 @@ type CatProps = {
 
 function HomePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [cats, setCats] = useState<CatProps[]>([]);
   const { setVotes, votes } = useVotesContext();
   const [, setValue] = useLocalStorage('votes');
 
   const { fetchCats } = useRequests();
 
-  const { isLoading, data, error } = useQuery('cats', fetchCats);
-
-  const cats = (data as CatProps[]) || [];
-
   useEffect(() => {
-    if (currentIndex === cats.length - 1) {
-      setCurrentIndex(0);
-    }
-  }, [currentIndex, JSON.stringify(cats)]);
+    setIsLoading(true);
+    fetchCats().then((data) => {
+      setIsLoading(false);
+      setCats(data as CatProps[]);
+    });
+  }, []);
 
   const handleVote = (status: 'likes' | 'dislikes') => {
     const cat = cats?.[currentIndex];
@@ -65,7 +64,11 @@ function HomePage() {
       <Card>
         <section className="card-image">
           <img
-            src={!isLoading && data ? data?.[currentIndex]?.url : placeholder}
+            src={
+              !isLoading && cats.length
+                ? cats?.[currentIndex]?.url
+                : '/images/placeholder.jpg'
+            }
             alt="cat"
             style={{
               height: '100%',

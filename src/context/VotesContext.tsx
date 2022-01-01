@@ -2,12 +2,12 @@ import { useContext, createContext, useState } from 'react';
 
 export const VotesContext = createContext<VotesContextType>(null);
 
-type VotesContextType = {
+export type VotesContextType = {
   votes: VotesType;
   setVotes: (votes: VotesType) => void;
 };
 
-type VotesType = {
+export type VotesType = {
   likes: string[];
   dislikes: string[];
 };
