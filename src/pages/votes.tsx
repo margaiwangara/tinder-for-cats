@@ -8,6 +8,13 @@ function Votes() {
         <Tab active>Liked</Tab>
         <Tab>Disliked</Tab>
       </TabWrapper>
+      <GridView>
+        {Array(10)
+          .fill(1)
+          .map((_, index) => (
+            <GridItem key={index} />
+          ))}
+      </GridView>
     </DefaultLayout>
   );
 }
@@ -37,4 +44,14 @@ const Tab = styled.button<{ active?: boolean }>`
   }
 `;
 
+const GridView = styled.section`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 200px;
+  grid-gap: 1rem;
+`;
+
+const GridItem = styled.section`
+  border: solid 1px ${({ theme }) => theme.colors.primary};
+`;
 export default Votes;
