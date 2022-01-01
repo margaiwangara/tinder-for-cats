@@ -1,15 +1,14 @@
 import DefaultLayout from '@containers/DefaultLayout';
 import styled from 'styled-components';
-import { Button } from '@components/UI';
-import Image from 'next/image';
+import { Button, Image } from '@components/UI';
 import { IoHeartOutline, IoHeart, IoCheckmark, IoClose } from 'react-icons/io5';
-import { useQuery } from 'react-query';
 import { useRequests } from '@hooks/useRequests';
 import Loader from '@components/Loader';
 import { useState, useEffect } from 'react';
 import { useVotesContext } from '@context/VotesContext';
-import { __DATA_COUNT__ } from '@src/constants';
+import { __DATA_COUNT__, __VOTES_LOCAL_STORAGE__ } from '@src/constants';
 import { useLocalStorage } from '@hooks/useLocalStorage';
+import { Notyf } from 'notyf';
 
 type CatProps = {
   id: string;
@@ -21,18 +20,37 @@ type CatProps = {
 function HomePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [notyf, setNotyf] = useState<Notyf>();
   const [cats, setCats] = useState<CatProps[]>([]);
   const { setVotes, votes } = useVotesContext();
-  const [, setValue] = useLocalStorage('votes');
+  const [, setValue] = useLocalStorage(__VOTES_LOCAL_STORAGE__);
 
   const { fetchCats } = useRequests();
 
   useEffect(() => {
-    setIsLoading(true);
-    fetchCats().then((data) => {
-      setIsLoading(false);
-      setCats(data as CatProps[]);
-    });
+    let isMounted = true;
+    if (isMounted) {
+      setIsLoading(true);
+      setNotyf(new Notyf());
+    }
+
+    fetchCats()
+      .then((data) => {
+        if (isMounted) {
+          setIsLoading(false);
+          setCats(data as CatProps[]);
+        }
+      })
+      .catch((error) => {
+        if (isMounted) {
+          setIsLoading(false);
+          notyf.error(error.message);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleVote = (status: 'likes' | 'dislikes') => {
@@ -55,27 +73,19 @@ function HomePage() {
     setCurrentIndex(currentIndex + 1);
   };
 
-  console.log('votes', votes);
-
   return (
     <DefaultLayout title="Home">
       {isLoading && <Loader />}
 
       <Card>
         <section className="card-image">
-          <img
+          <Image
             src={
               !isLoading && cats.length
                 ? cats?.[currentIndex]?.url
                 : '/images/placeholder.jpg'
             }
             alt="cat"
-            style={{
-              height: '100%',
-              width: '100%',
-              objectFit: 'cover',
-              objectPosition: 'center',
-            }}
           />
         </section>
         <section className="footer">

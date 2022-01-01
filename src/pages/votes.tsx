@@ -1,20 +1,56 @@
 import DefaultLayout from '@containers/DefaultLayout';
 import styled from 'styled-components';
-import { Button } from '@components/UI';
+import { Button, Image } from '@components/UI';
+import { useVotesContext } from '@context/VotesContext';
+import { useEffect, useState } from 'react';
+import { useLocalStorage } from '@hooks/useLocalStorage';
+import { __VOTES_LOCAL_STORAGE__ } from '@src/constants';
 
 function Votes() {
+  const [activeTab, setActiveTab] = useState<'likes' | 'dislikes'>('likes');
+  const [storedValue] = useLocalStorage(__VOTES_LOCAL_STORAGE__);
+  const { votes, setVotes } = useVotesContext();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const storedVotes = storedValue ? storedValue : votes;
+    if (isMounted) {
+      setVotes(storedVotes);
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [JSON.stringify(storedValue)]);
+
   return (
     <DefaultLayout title="Votes">
       <TabWrapper>
-        <Tab active>Liked</Tab>
-        <Tab>Disliked</Tab>
+        <Tab
+          active={activeTab === 'likes'}
+          onClick={() => setActiveTab('likes')}
+        >
+          Liked
+        </Tab>
+        <Tab
+          active={activeTab === 'dislikes'}
+          onClick={() => setActiveTab('dislikes')}
+        >
+          Disliked
+        </Tab>
       </TabWrapper>
       <GridView>
-        {Array(10)
-          .fill(1)
-          .map((_, index) => (
-            <GridItem key={index} />
-          ))}
+        {votes?.[activeTab].map((value) => {
+          const split = value?.split(';');
+          const id = split?.[0];
+          const url = split?.[1];
+          return (
+            <GridItem key={id}>
+              <Image src={url} alt="cat" />
+            </GridItem>
+          );
+        })}
       </GridView>
     </DefaultLayout>
   );
@@ -42,6 +78,6 @@ const GridView = styled.section`
 `;
 
 const GridItem = styled.section`
-  border: solid 1px ${({ theme }) => theme.colors.primary};
+  border: solid 1px transparent;
 `;
 export default Votes;
