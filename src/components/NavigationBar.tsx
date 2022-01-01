@@ -1,22 +1,37 @@
 import Link from 'next/link';
 import styled from 'styled-components';
+import { useRouter } from 'next/router';
 
 function NavigationBar() {
+  const router = useRouter();
+
+  const activeLink = (path: string) => {
+    if (router.pathname === `/${path}`) {
+      return ' active';
+    }
+    return '';
+  };
+
+  console.log('router', router.pathname);
+
   return (
     <NavBarWrapper>
       <Link href="/">
         <a className="navbar-brand">Tinder For Cats</a>
       </Link>
       <section className="nav-links">
-        <Link href="/favorites">
-          <a className="nav-link">Favorites</a>
+        <Link href="/votes">
+          <a className={`nav-link${activeLink('votes')}`}>Votes</a>
         </Link>
-        <Link href="/breeds">
-          <a className="nav-link">Breeds</a>
+        <Link href="/favorites">
+          <a className={`nav-link${activeLink('favorites')}`}>Favorites</a>
+        </Link>
+        {/* <Link href="/breeds">
+          <a className={`nav-link${activeLink('breeds')}`}>Breeds</a>
         </Link>
         <Link href="/search">
-          <a className="nav-link">Search</a>
-        </Link>
+          <a className={`nav-link${activeLink('search')}`}>Search</a>
+        </Link> */}
       </section>
     </NavBarWrapper>
   );
@@ -44,6 +59,10 @@ const NavBarWrapper = styled.nav`
     font-size: 1rem;
     color: ${({ theme }) => theme.colors.black};
     font-weight: 500;
+
+    &.active {
+      color: ${({ theme }) => theme.colors.primary};
+    }
 
     &:hover {
       color: ${({ theme }) => theme.colors.primary};
