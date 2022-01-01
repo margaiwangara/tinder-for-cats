@@ -21,15 +21,6 @@ function NavigationBar() {
         <Link href="/votes">
           <a className={`nav-link${activeLink('votes')}`}>Votes</a>
         </Link>
-        <Link href="/favorites">
-          <a className={`nav-link${activeLink('favorites')}`}>Favorites</a>
-        </Link>
-        {/* <Link href="/breeds">
-          <a className={`nav-link${activeLink('breeds')}`}>Breeds</a>
-        </Link>
-        <Link href="/search">
-          <a className={`nav-link${activeLink('search')}`}>Search</a>
-        </Link> */}
       </section>
     </NavBarWrapper>
   );

@@ -1,14 +1,14 @@
-import DefaultLayout from '@containers/DefaultLayout';
-import styled from 'styled-components';
-import { Button, Image } from '@components/UI';
-import { IoHeartOutline, IoHeart, IoCheckmark, IoClose } from 'react-icons/io5';
-import { useRequests } from '@hooks/useRequests';
 import Loader from '@components/Loader';
-import { useState, useEffect } from 'react';
+import { Button, Image } from '@components/UI';
+import DefaultLayout from '@containers/DefaultLayout';
 import { useVotesContext } from '@context/VotesContext';
-import { __DATA_COUNT__, __VOTES_LOCAL_STORAGE__ } from '@src/constants';
 import { useLocalStorage } from '@hooks/useLocalStorage';
+import { useRequests } from '@hooks/useRequests';
+import { __VOTES_LOCAL_STORAGE__ } from '@src/constants';
 import { Notyf } from 'notyf';
+import { useEffect, useState } from 'react';
+import { IoCheckmark, IoClose } from 'react-icons/io5';
+import styled from 'styled-components';
 
 type CatProps = {
   id: string;
@@ -113,29 +113,7 @@ const Card = styled.section`
   .card-image {
     width: 100%;
     height: 350px;
-  }
-
-  button.fav-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: ${({ theme }) => theme.colors.white};
-    border-radius: 50%;
-    height: 40px;
-    width: 40px;
-    box-shadow: 0px 0px 2.5px 0px rgba(0, 0, 0, 0.75);
-    outline: none;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    cursor: pointer;
-    z-index: 100;
-
-    &:hover {
-      opacity: 0.8;
-    }
+    position: relative;
   }
 
   .footer {
