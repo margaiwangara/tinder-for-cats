@@ -6,9 +6,11 @@ import { IoHeartOutline, IoHeart, IoCheckmark, IoClose } from 'react-icons/io5';
 import { useQuery } from 'react-query';
 import { useRequests } from '@hooks/useRequests';
 import Loader from '@components/Loader';
-import { useState, useEffect, useRef, createRef, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useVotesContext } from '@context/VotesContext';
 import { __DATA_COUNT__ } from '@src/constants';
+import { useLocalStorage } from '@hooks/useLocalStorage';
+import placeholder from '@public/images/placeholder.jpg';
 
 type CatProps = {
   id: string;
@@ -20,6 +22,7 @@ type CatProps = {
 function HomePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const { setVotes, votes } = useVotesContext();
+  const [, setValue] = useLocalStorage('votes');
 
   const { fetchCats } = useRequests();
 
@@ -39,11 +42,16 @@ function HomePage() {
       return;
     }
 
+    const vote = `${cat.id};${cat.url}`;
+
     const newVotes = {
       ...votes,
-      [status]: [...votes[status], cat.id],
+      [status]: votes?.[status].includes(vote)
+        ? [...votes?.[status]]
+        : [...votes?.[status], vote],
     };
 
+    setValue(newVotes);
     setVotes(newVotes);
     setCurrentIndex(currentIndex + 1);
   };
@@ -56,16 +64,15 @@ function HomePage() {
 
       <Card>
         <section className="card-image">
-          <Image
-            layout="responsive"
-            height={350}
-            width={300}
+          <img
+            src={!isLoading && data ? data?.[currentIndex]?.url : placeholder}
             alt="cat"
-            src={
-              !isLoading && data
-                ? data?.[currentIndex]?.url
-                : '/images/placeholder.jpg'
-            }
+            style={{
+              height: '100%',
+              width: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center',
+            }}
           />
         </section>
         <section className="footer">
