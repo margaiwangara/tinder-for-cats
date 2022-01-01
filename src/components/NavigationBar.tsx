@@ -12,8 +12,6 @@ function NavigationBar() {
     return '';
   };
 
-  console.log('router', router.pathname);
-
   return (
     <NavBarWrapper>
       <Link href="/">

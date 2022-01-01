@@ -13,6 +13,10 @@ export const apiRequest = (
       baseURL: __BASE_URL__,
       url,
       data,
+      headers: {
+        'Set-Cookie': 'HttpOnly;Secure;SameSite=None',
+        ...config?.headers,
+      },
       ...config,
     })
       .then((response) => {

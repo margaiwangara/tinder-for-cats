@@ -23,7 +23,9 @@
       "@src/*": ["src/*"],
       "@public/*": ["public/*"],
       "@containers/*": ["src/containers/*"],
-      "@context/*": ["src/context/*"]
+      "@context/*": ["src/context/*"],
+      "@services/*": ["src/services/*"],
+      "@hooks/*": ["src/hooks/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

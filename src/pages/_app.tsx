@@ -3,15 +3,20 @@ import { AppProps } from 'next/app';
 import theme from '@src/theme';
 import { normalize } from 'polished';
 import FavoritesProvider from '@context/FavoritesContext';
+import { QueryClientProvider, QueryClient } from 'react-query';
+
+const queryClient = new QueryClient();
 
 function App({ Component, pageProps }: AppProps) {
   return (
-    <FavoritesProvider>
-      <GlobalStyle />
-      <ThemeProvider theme={theme}>
-        <Component {...pageProps} />
-      </ThemeProvider>
-    </FavoritesProvider>
+    <QueryClientProvider client={queryClient}>
+      <FavoritesProvider>
+        <GlobalStyle />
+        <ThemeProvider theme={theme}>
+          <Component {...pageProps} />
+        </ThemeProvider>
+      </FavoritesProvider>
+    </QueryClientProvider>
   );
 }
 
